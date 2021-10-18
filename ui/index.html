@@ -1,0 +1,375 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+		<script>
+
+			let selected = 0;
+			let firstopen = 0;
+			var steamid = null;
+			$(function(){
+				$(document).keyup(function(e) {
+					if(e.keyCode == 27){
+						$("#vehpage").css('display', 'none')
+						$.post('http://carspawning/close', JSON.stringify({}));
+					}
+				});
+
+				$("#reload").click(() => {
+					console.log(steam);
+					$.post('http://carspawning/refresh', JSON.stringify({}));
+				});
+
+				window.addEventListener('message', function(event) {
+					if(event.data.type == "close"){
+						$("#vehpage").css('display', 'none');
+						$.post('http://carspawning/close', JSON.stringify({}));
+						return true;
+					}
+					if(event.data.type == "refresh"){
+						if(event.data.power !== null || event.data.power !== 0){
+							power = event.data.power;
+						}else{
+							power = 0
+						}
+
+						RescanCards();
+					}
+					if(event.data.type == "open"){
+						$('#vehpage').css('display', 'block');
+					}
+
+					$("#titlebar").text("Vehicle Spawner");
+					if(firstopen == 0){
+						// Save the users steam into a global variable for rescanning - Not currently used
+						steam = event.data.steam;
+
+						// Hide all cards for security
+						$(".card").hide();
+
+						// Refreshes player
+						$.post('http://carspawning/refresh', JSON.stringify({}))
+
+						// Prevent rescanning on open.
+						firstopen = 1;
+					}
+					$("#vehpage").css('display', "block");
+				});
+
+				function RescanCards(){
+					$(".card").each(function(idx, elem){
+						let cardp = $(elem).attr("power");
+						if(cardp == null){
+							cardp = 0;
+						}
+						// Convert both to a number. If you don't the comparisons mess up and act really weird for some reason.
+						power = Number(power);
+						cardp = Number(cardp);
+
+						// Check if user has enough power to display cards
+						if(power >= cardp){
+							$(elem).show();
+						}else{
+							$(elem).hide();
+						}
+					});
+				}
+
+				$("#close").click(() => {
+					$("#vehpage").css('display', 'none')
+					$.post('http://carspawning/close', JSON.stringify({}));
+				})
+
+				$('button').click(function() {$(this).blur()});
+			});
+		</script>
+		<script>
+			$(document).ready(function(){
+
+			  $("#selected").children().hide();
+			  $("#notexist").show();
+
+			  $(".catagory").click(function(){
+				$('.catagory').removeClass('selected');
+				$("#selected").children().hide();
+				$(this).addClass('selected');
+
+				$('.catagories').css('display', 'none');
+				$("#" + $(this).attr("value")).css('display', 'block');
+				$('#notexist').css('display', 'none');
+			  });
+
+			  $("button[name=spawn]").click(function(){
+				$.post("http://carspawning/spawnveh", JSON.stringify({vehicle: $(this).attr("modelname")}));
+			  });
+			});
+		  </script>
+
+		<style>#vehpage,#exist,#server,#select_server { display: none; }</style>
+		<style>
+			body{
+			  color: white;
+			  font-family: sans-serif;
+			  overflow: hidden;
+			  margin: 0px;
+			}
+			.quick { margin-left: 9px; width: 31%; background: rgb(151, 66, 66); border: none; padding-top: 5px; padding-bottom: 5px; margin-top: 5px; color: white; font-size: 17px; }
+			.quick:focus { outline: none; }
+			#list { display: inline-block; margin-bottom: 100px; width: 200px; height: 640px; overflow-x: hidden; -webkit-box-shadow: 0 6px 20px rgba(0, 0, 0, 0.19); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.19); }
+			#selected h3 { margin-left: 5px;}
+			p { padding-left: 10px; }
+			.group_set { float: left; padding: 10px; width: 278px; }
+			.group_set button { padding-left: 25px; padding-right: 25px; border: none; width: 100%; margin-top: 4px; padding-top: 5px; padding-bottom: 5px; background: rgb(151, 66, 66); color: white; font-weight: bold; }
+			.group_set input { width: 100%; padding-top: 3px; padding-bottom: 3px; }
+			.group_set label { display: block; }
+			#selected { position: absolute; display: inline-block; width: 600px; height: 640px; overflow-y: auto;}
+			#selected h1 { margin-left: 20px; }
+			#selected h2 { color:#999; margin-top:0px; margin-left: 40px; font-weight: normal;}
+			.catagory { width: 100%; text-indent: 10px; padding: 5px; }
+			.catagory:nth-child(odd) { background: -webkit-linear-gradient(right, transparent 0%, rgb(85, 85, 85) 100%); }
+			.catagory.selected { background: -webkit-linear-gradient(right, transparent 0%, rgb(95, 65, 65) 100%); }
+
+			#selected::-webkit-scrollbar
+			{
+				width: 6px;
+				background-color: rgba(0,0,0,0.2);
+			}
+
+			#selected::-webkit-scrollbar-thumb
+			{
+				background-color: #222;
+			  border-radius: 5px;
+			}
+
+			.card{
+			  float: left;
+			  padding: 10px;
+			  width: 150px;
+			  text-align: center;
+			  margin-left: 15px;
+			  background-color: rgba(0,0,0,0.3);
+			  box-shadow: 5px 5px 1px 1px #333;
+			  border-radius: 3px;
+			  margin-bottom: 15px;
+			}
+			.card p {
+			  margin-top: 0;
+			  color: #777;
+			}
+			.card button{
+			  width: 100%;
+			  background: rgb(151, 66, 66);
+			  border: none;
+			  padding-top: 5px;
+			  padding-bottom: 5px;
+			  margin-top: 5px;
+			  color: white;
+			  font-size: 17px;
+			  font-weight: bold;
+			}
+			.card-special{
+			  border: 2px dotted #0aa;
+			  margin-bottom: 11px;
+			}
+			.card-admin{
+			  border: 2px dotted #a00;
+			  margin-bottom: 11px;
+			}
+			.card-new{
+			  border: 2px dotted #0a0;
+			  margin-bottom: 11px;
+			}
+
+			.card.card-special luna:before{
+			  content: "Luna Only";
+			}
+			.card.card-special luna{
+			  opacity: 0.3;
+			  color: red;
+			}
+
+			#exist{ display: none; }
+		</style>
+    </head>
+    <body>
+        <div id="vehpage">
+			<div class="topbar">
+				<p id="titlebar">Vehicle Spawner</p>
+				<div id="close">&#10060;</div>
+			</div>
+
+			<div id="core">
+				<div id="tabs">
+					<button class="tab">No Vehicles?</button>
+					<button class="tab">Hit Refresh!</button>
+					<button id="reload" class="tab" style=float:right;>Refresh</button>
+				</div>
+				<div id="main">
+                    <div id="list">
+						<div class="catagory" value="addons">Addons</div>
+						<div class="catagory" value="specialist">Specialist</div>
+						<div class="catagory" value="emergency">Emergency</div>
+						<div class="catagory" value="admin">Admin</div>
+					</div>
+                    <div id="selected">
+						<div id="notexist">
+							<h1>Select a vehicle catagory</h1>
+						</div>
+						<div id="addons">
+						<h1>Addon Vehicles</h1>
+							<div class="card">
+								<b>Card</b>
+								<p>Normal Card</p>
+								<button name="spawn" modelname="adder">Spawn</button>
+							</div>
+							<div class="card card-admin">
+								<b>Admin Card</b>
+								<p>Admin Card</p>
+								<button name="spawn" modelname="adder">Spawn</button>
+							</div>
+							<div class="card card-new">
+								<b>New Card</b>
+								<p>New Card</p>
+								<button name="spawn" modelname="adder">Spawn</button>
+							</div>
+							<div class="card card-special" power=18>
+								<b>Special Card</b>
+								<p>Special Card</p>
+								<button name="spawn" modelname="adder">Spawn</button>
+							</div>
+						</div>
+						<div id="doomsday">
+							<h1>GTA:O Doomsday DLC Vehicles</h1>
+							<h2>This is a list of Doomsday DLC vehicles that are not broken in any <i>known</i> way</h2>
+						</div>
+						<div id="emergency">
+							<h1>Emergency Vehicles</h1>
+							<div class="card">
+								<b>Crown Victoria</b>
+								<p>police7</p>
+								<button name="spawn" modelname="police7">Spawn</button>
+							</div>
+							<div class="card">
+								<b>Ford Explorer</b>
+								<p>police3</p>
+								<button name="spawn" modelname="police3">Spawn</button>
+							</div>
+							<div class="card">
+								<b>Ford Taurus</b>
+								<p>police4</p>
+								<button name="spawn" modelname="police4">Spawn</button>
+							</div>
+							<!-- Deputy Sheriff -->
+							<div class="card" power=1>
+								<b>Sheriff Charger</b>
+								<p>sheriff</p>
+								<button name="spawn" modelname="sheriff">Spawn</button>
+							</div>
+							<div class="card" power=1>
+								<b>Blue Sheriff Charger</b>
+								<p>sfbc2</p>
+								<button name="spawn" modelname="sfbc2">Spawn</button>
+							</div>
+							<!-- Deputy Sheriff II -->
+							<div class="card" power=2>
+								<b>Sheriff Crown Vic</b>
+								<p>sheriff3</p>
+								<button name="spawn" modelname="sheriff3">Spawn</button>
+							</div>
+							<div class="card" power=2>
+								<b>Sheriff Tahoe</b>
+								<p>sheriff2</p>
+								<button name="spawn" modelname="sheriff2">Spawn</button>
+							</div>
+							<div class="card" power=2>
+								<b>Sheriff Crown Vic</b>
+								<p>sfbc4</p>
+								<button name="spawn" modelname="sfbc4">Spawn</button>
+							</div>
+							<!-- Deputy Sheriff III -->
+							<div class="card card-special" power=3>
+								<b>2016 Explorer</b>
+								<p>police5</p>
+								<button name="spawn" modelname="police5">Spawn</button>
+							</div>
+							<div class="card card-special" power=3>
+								<b>New Explorer </b>
+								<p>sfbc1</p>
+								<button name="spawn" modelname="sfbc1">Spawn</button>
+							</div>
+							<!-- Deputy Sheriff IV -->
+							<div class="card" power=4>
+								<b>UM Tahoe</b>
+								<p>fbi2</p>
+								<button name="spawn" modelname="fbi2">Spawn</button>
+							</div>
+							<!-- Corporal -->
+							<div class="card card-special" power=5>
+								<b>Hellcat</b>
+								<p>police2</p>
+								<button name="spawn" modelname="police2">Spawn</button>
+							</div>
+							<div class="card card-special" power=3>
+								<b>New Taho </b>
+								<p>sfbc3</p>
+								<button name="spawn" modelname="sfbc3">Spawn</button>
+							</div>
+							<!-- Sergeant -->
+							<div class="card" power=6>
+								<b>UM Charger</b>
+								<p>fbi</p>
+								<button name="spawn" modelname="fbi">Spawn</button>
+							</div>
+							<!-- First Sergeant -->
+							<div class="card" power=7>
+							  <b>Police F350</b>
+							  <p>police9</p>
+							  <button name="spawn" modelname="police9">Spawn</button>
+							</div>
+							<!-- Lieutenant -->
+							<div class="card" power=8>
+							  <b>Unmarked Hellcat</b>
+							  <p>fbi3</p>
+							  <button name="spawn" modelname="fbi3">Spawn</button>
+							</div>
+							<!-- Captain (Power 9) -->
+
+							<!-- Chief/Commissioner (Power 10) -->
+							</div>
+                        </div>
+						<div id="admin">
+							<!-- Probationary -->
+							<div class="card card-admin" power=15>
+								<b>Admin Tahoe</b>
+								<p>admin_taho</p>
+								<button name="spawn" modelname="admin_taho">Spawn</button>
+							</div>
+							<div class="card card-admin" power=15>
+								<b>Admin Victoria</b>
+								<p>admin_cvic</p>
+								<button name="spawn" modelname="admin_cvic">Spawn</button>
+							</div>
+							<!-- Server Admin -->
+							<div class="card card-admin" power=16>
+								<b>Admin Explorer</b>
+								<p>admin_exp</p>
+								<button name="spawn" modelname="admin_exp">Spawn</button>
+							</div>
+							<div class="card card-admin" power=16>
+								<b>Admin F350</b>
+								<p>admin_f350</p>
+								<button name="spawn" modelname="admin_f350">Spawn</button>
+							</div>
+							<div class="card card-admin" power=16>
+								<b>Admin Charger</b>
+								<p>admin_chgr</p>
+								<button name="spawn" modelname="admin_chgr">Spawn</button>
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
