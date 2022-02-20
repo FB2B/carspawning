@@ -7,85 +7,51 @@
     <body>
         <div id="vehpage">
                 <div class="topbar">
-                    <p id="titlebar">Vehicle Spawner</p>
-                    <div id="close">&#10060;</div>
+                    <p id="titlebar">PDM Vehicle Spawner</p>
+                    <button id="close">Close</button>
                 </div>
-
                 <div id="core">
-                    <div id="tabs">
-                        <button class="tab">No Vehicles?</button>
-                        <button class="tab">Hit Refresh!</button>
-                        <button id="reload" class="tab" style=float:right;>Refresh</button>
-                    </div>
                     <div id="main">
                         <div id="list">
-                            <!-- List of categories edit as you may, but read the DOCS -->
                             <div class="catagory" value="addons">Addons</div>
-                            <div class="catagory" value="specialist">Specialist</div>
-                            <div class="catagory" value="emergency">Emergency</div>
-                            <div class="catagory" value="admin">Admin</div>
+                            <div class="catagory" value="emergency">Emergancy</div>
+                            <div class="catagory" value="sport">Sport</div>
                         </div>
                         <div id="selected">
                             <div id="notexist">
-                                <h1>Select a vehicle category</h1>
+                                <h1>Select a catagory</h1>
                             </div>
 
-
-                            <!-- Addon Category, edit as you may | div id MUST be equal to category value! Read the DOCS! -->
                             <div id="addons">
-                                <h1>Addon Vehicles</h1>
+                                <h1>Addons</h1>
 
-                                <!-- Cards, edit as you may -->
                                 <div class="card" power=0>
                                     <b>Example1</b>
-                                    <p>spawncode</p>
                                     <button name="spawn" modelname="spawncode">Spawn</button>
                                 </div>
                             </div>
 
 
-                            <!-- Specialist category-->
-                            <div id="specialist">
-                                <h1>Specialist Vehicles</h1>
-
-                                <!-- Cards, edit as you may -->
-                                <div class="card card-special" power=0>
-                                    <b>Example2</b>
-                                    <p>spawncode</p>
-                                    <button name="spawn" modelname="spawncode">Spawn</button>
-                                </div>
-                            </div>
-
-
-                            <!-- Emergency Category -->
                             <div id="emergency">
-                                <h1>Emergency Vehicles</h1>
+                                <h1>Emergancy </h1>
 
-                                <!-- Cards, edit as you may -->
+                                <div class="card" power=0>
+                                    <b>Example2</b>
+                                    <button name="spawn" modelname="spawncode">Spawn</button>
+                                </div>
+                            </div>
+
+                            <div id="sport">
+                                <h1>sport </h1>
                                 <div class="card" power=0>
                                     <b>Example3</b>
-                                    <p>spawncode</p>
                                     <button name="spawn" modelname="spawncode">Spawn</button>
                                 </div>
                             </div>
-
-
-                            <!-- Admin Category -->
-                            <div id="admin">
-                                <h1>Admin Vehicles</h1>
-
-                                <!-- Cards, edit as you may -->
-                                <div class="card card-admin" power=10>
-                                    <b>Example4</b>
-                                    <p>spawncode</p>
-                                    <button name="spawn" modelname="spawncode">Spawn</button>
-                                </div>
-                            </div>
-
-                            
                         </div>
                     </div>
                 </div>
         </div>
     </body>
+    
 </html>

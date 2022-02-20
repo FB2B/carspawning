@@ -66,3 +66,4 @@ function OpenMenu()
     SetNuiFocus(true, true)
     SendNUIMessage({type = "open", permissions = PlayerPowerLevel})
 end
+
